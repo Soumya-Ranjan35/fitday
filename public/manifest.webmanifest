@@ -1,9 +1,10 @@
 {
   "name": "fitday",
   "short_name": "fitday",
+  "id": "/fitday/",
+  "scope": "/fitday/",
+  "start_url": "/fitday/",
   "display": "standalone",
-  "scope": "./",
-  "start_url": "./",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
