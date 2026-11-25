@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular
-        run: npx ng build --configuration production --base-href /fitday-angular/
+        run: npx ng build --configuration production --base-href /fitday/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
