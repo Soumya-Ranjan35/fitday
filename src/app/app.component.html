@@ -1,0 +1,106 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="#" (click)="$event.preventDefault(); activeTab='overview'">
+      <span class="brand-mark">✦</span><span>fitday</span>
+    </a>
+    <div class="top-date">{{ today | date:'EEE, d MMM' }}</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">YOUR DAILY WELLNESS SPACE</p>
+        <h1>Small steps.<br><span>Stronger you.</span></h1>
+        <p class="hero-copy">Build a routine that feels good, one day at a time.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="sun"></div><div class="person">🏃</div><div class="hero-leaf">✳</div>
+      </div>
+    </section>
+
+    <section class="date-strip">
+      <button class="icon-btn" aria-label="Previous day" (click)="changeDay(-1)">‹</button>
+      <div><span class="date-kicker">YOUR PLAN FOR</span><strong>{{ dateLabel }}</strong></div>
+      <button class="icon-btn" aria-label="Next day" (click)="changeDay(1)">›</button>
+    </section>
+
+    <nav class="tabs" aria-label="Main navigation">
+      <button [class.active]="activeTab==='overview'" (click)="activeTab='overview'">Overview</button>
+      <button [class.active]="activeTab==='todos'" (click)="activeTab='todos'">To-do list</button>
+      <button [class.active]="activeTab==='workout'" (click)="activeTab='workout'">Exercises</button>
+    </nav>
+
+    <ng-container *ngIf="activeTab==='overview'">
+      <section class="stats-grid">
+        <article class="stat-card mint">
+          <span class="stat-icon">☑</span><span class="stat-label">TODOS DONE</span>
+          <strong>{{ completedTodos }}<small>/{{ todos.length }}</small></strong>
+          <div class="progress-track"><div class="progress-fill" [style.width.%]="todoProgress"></div></div>
+        </article>
+        <article class="stat-card peach">
+          <span class="stat-icon">⚡</span><span class="stat-label">WORKOUT DONE</span>
+          <strong>{{ completedExercises }}<small>/{{ exercises.length }}</small></strong>
+          <div class="progress-track"><div class="progress-fill" [style.width.%]="exerciseProgress"></div></div>
+        </article>
+      </section>
+
+      <section class="section-heading">
+        <div><p class="eyebrow">KEEP YOUR MOMENTUM</p><h2>Today's focus</h2></div>
+      </section>
+      <section class="focus-card">
+        <div class="focus-emoji">🌿</div>
+        <div><strong>Consistency over perfection</strong><p>Start gently. Take breaks when you need them. Every completed step counts.</p></div>
+      </section>
+
+      <section class="section-heading compact">
+        <h2>Up next</h2><button class="text-btn" (click)="activeTab='todos'">View all →</button>
+      </section>
+      <section class="preview-list">
+        <div class="preview-row" *ngFor="let todo of todos.slice(0,3)">
+          <button class="check" [class.checked]="todo.done" (click)="toggleTodo(todo)" [attr.aria-label]="'Toggle '+todo.title">{{ todo.done ? '✓' : '' }}</button>
+          <span [class.strike]="todo.done">{{ todo.title }}</span><small>{{ todo.category }}</small>
+        </div>
+        <p class="empty" *ngIf="!todos.length">Your list is clear. Add a task when you're ready.</p>
+      </section>
+    </ng-container>
+
+    <ng-container *ngIf="activeTab==='todos'">
+      <section class="section-heading"><div><p class="eyebrow">ONE THING AT A TIME</p><h2>Daily to-do list</h2></div></section>
+      <div class="add-card">
+        <input [(ngModel)]="newTodo" (keyup.enter)="addTodo()" placeholder="What would you like to get done?" aria-label="New to-do">
+        <select [(ngModel)]="newCategory" aria-label="Task category">
+          <option>Personal</option><option>Fitness</option><option>Health</option><option>Nutrition</option><option>Work</option>
+        </select>
+        <button class="primary-btn" (click)="addTodo()">Add task +</button>
+      </div>
+      <div class="list-meta"><span>{{ completedTodos }} of {{ todos.length }} completed</span><span>{{ todoProgress }}%</span></div>
+      <div class="progress-track wide"><div class="progress-fill" [style.width.%]="todoProgress"></div></div>
+      <section class="task-list">
+        <article class="task-row" *ngFor="let todo of todos">
+          <button class="check" [class.checked]="todo.done" (click)="toggleTodo(todo)" [attr.aria-label]="'Toggle '+todo.title">{{ todo.done ? '✓' : '' }}</button>
+          <div class="task-content"><span [class.strike]="todo.done">{{ todo.title }}</span><small>{{ todo.category }}</small></div>
+          <button class="delete-btn" (click)="removeTodo(todo.id)" aria-label="Delete task">×</button>
+        </article>
+        <div class="empty-state" *ngIf="!todos.length"><span>🌱</span><strong>Nothing on your list</strong><p>Add a task above to get started.</p></div>
+      </section>
+    </ng-container>
+
+    <ng-container *ngIf="activeTab==='workout'">
+      <section class="section-heading"><div><p class="eyebrow">BEGINNER FRIENDLY · NO GYM NEEDED</p><h2>Today's movement</h2></div></section>
+      <div class="workout-intro"><span>💚</span><div><strong>Go at your own pace</strong><p>Warm up first, move with control, and stop if you feel pain, dizziness or unusual shortness of breath.</p></div></div>
+      <div class="list-meta"><span>{{ completedExercises }} of {{ exercises.length }} activities done</span><span>{{ exerciseProgress }}%</span></div>
+      <div class="progress-track wide"><div class="progress-fill" [style.width.%]="exerciseProgress"></div></div>
+      <section class="exercise-list">
+        <article class="exercise-card" *ngFor="let exercise of exercises" [class.exercise-done]="exercise.done">
+          <div class="exercise-icon">{{ exercise.icon }}</div>
+          <div class="exercise-info"><strong>{{ exercise.name }}</strong><p>{{ exercise.detail }}</p><small>{{ exercise.duration }}</small></div>
+          <button class="check" [class.checked]="exercise.done" (click)="toggleExercise(exercise)" [attr.aria-label]="'Complete '+exercise.name">{{ exercise.done ? '✓' : '' }}</button>
+        </article>
+      </section>
+      <button class="secondary-btn" (click)="resetWorkout()">Reset today's workout</button>
+      <p class="safety-note">Beginner tip: start with one set if two feels too difficult. Take 45–60 seconds of rest between sets. A rest day is part of the plan.</p>
+    </ng-container>
+  </main>
+
+  <footer><span>✦ fitday</span><small>Your progress, your pace.</small></footer>
+</div>
